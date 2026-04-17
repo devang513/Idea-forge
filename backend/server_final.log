@@ -1,0 +1,21 @@
+◇ injected env (0) from .env // tip: ◈ encrypted .env [www.dotenvx.com]
+--- Mock Database Initialized (In-Memory) ---
+Google Cloud Natural Language API initialized
+Server running on port 5001 (Version: 1.2 - Mock Fix)
+!!! MongoDB connection error. Switching to Mock DB fallback !!!
+Error details: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+Analyzing idea: Food delivery app
+Google NL API failed or not configured, using basic heuristics for NLP metrics
+AI analysis completed for: Food delivery app
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+[Error: ENOENT: no such file or directory, open '/Users/chandandubey/Downloads/Idea-to-Prototype-Validation-Platform-master/backend/service-account-key.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/chandandubey/Downloads/Idea-to-Prototype-Validation-Platform-master/backend/service-account-key.json'
+}
+
+Node.js v24.14.1

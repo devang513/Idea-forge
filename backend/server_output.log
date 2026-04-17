@@ -1,0 +1,6 @@
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+--- Mock Database Initialized (In-Memory) ---
+Google Cloud Natural Language API initialized
+Server running on port 5001
+!!! MongoDB connection error. Switching to Mock DB fallback !!!
+Error details: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017

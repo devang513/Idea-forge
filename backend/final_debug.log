@@ -1,0 +1,34 @@
+◇ injected env (0) from .env // tip: ⌘ multiple files { path: ['.env.local', '.env'] }
+--- Mock Database Initialized (In-Memory) ---
+Google Cloud Natural Language API initialized
+Server running on port 5001 (Version: 1.2 - Mock Fix)
+--- Signup debug ---
+req.app.locals.useMockDb: false
+mongoose connection state: 2
+Using Mock DB for user lookup
+Proceeding with signup...
+User created in Mock DB: test@example.com
+!!! MongoDB connection error. Switching to Mock DB fallback !!!
+Error details: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+--- Signup debug ---
+req.app.locals.useMockDb: true
+mongoose connection state: 0
+Using Mock DB for user lookup
+Proceeding with signup...
+User created in Mock DB: devangbansal1109@gmail.com
+Analyzing idea: fghjk
+Google Cloud AI analysis failed: ENOENT: no such file or directory, open '/Users/chandandubey/Downloads/Idea-to-Prototype-Validation-Platform-master/backend/service-account-key.json'
+Using mock AI analysis due to Google Cloud error
+AI analysis completed for: fghjk
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+[Error: ENOENT: no such file or directory, open '/Users/chandandubey/Downloads/Idea-to-Prototype-Validation-Platform-master/backend/service-account-key.json'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/chandandubey/Downloads/Idea-to-Prototype-Validation-Platform-master/backend/service-account-key.json'
+}
+
+Node.js v24.14.1
