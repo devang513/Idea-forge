@@ -73,7 +73,7 @@ function AnimatedNumber({ target, duration = 1200 }) {
       if (p < 1) requestAnimationFrame(tick);
     };
     requestAnimationFrame(tick);
-  }, [target]);
+  }, [target, duration]);
   return <>{val}</>;
 }
 
@@ -134,8 +134,9 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
           t: ["Established competition", "Regulatory uncertainty"]
         },
         suggestions: isShort ? 
-          ["Please type a real, detailed startup idea.", "Describe the specific problem you are solving.", "Include who your target users are."] :
-          ["Narrow your target audience for MVP", "Define 2-3 key metrics for validation", "Reach out to 10 potential users this week"]
+          ["Please provide a real, detailed startup idea (e.g., 'An app for doctors').", "Target Audience pivot: Your current input is too vague. Specify exact demographics.", "Add a concrete monetization strategy."] :
+          ["Target Audience pivot: You mentioned 'everyone'. Narrow this down to 'College students aged 18-24'.", "Feature change: Remove the blockchain integration for now, it adds unnecessary complexity.", "Go-to-market: Focus entirely on TikTok marketing rather than expensive Google Ads."],
+        aiSummary: "Based on the input provided, this idea requires significant expansion. A full, comprehensive summary cannot be generated until a clear problem statement and proposed solution are provided. However, the core concept seems to revolve around the initial keywords entered."
       };
 
       if (response && response.ok) {
@@ -163,7 +164,8 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
         } : {
           s: ["Fallback used"], w: ["Backend error"], o: [""], t: [""]
         },
-        suggestions: ["Backend API error. Please check server."]
+        suggestions: ["Backend API error. Please check server."],
+        aiSummary: "The AI analysis could not be completed because the backend server is offline or the API key is invalid. Please restart your backend server."
       });
     } finally {
       setAnalyzing(false);
@@ -185,12 +187,6 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
         ))}
       </div>
 
-      {result.aiSummary && (
-        <div style={{ background: "linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(99, 102, 241, 0.05))", border: "1px solid rgba(167, 139, 250, 0.2)", borderRadius: 16, padding: 24, marginBottom: 24 }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa", marginBottom: 12, letterSpacing: 1 }}>AI EXECUTIVE SUMMARY</div>
-          <div style={{ fontSize: 16, color: "white", lineHeight: 1.6 }}>{result.aiSummary}</div>
-        </div>
-      )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 24, marginBottom: 24 }}>
         <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 24 }}>
@@ -241,15 +237,24 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
           </div>
         )}
 
-        <div style={{ background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 16, padding: 24 }}>
-          <div style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa", marginBottom: 16, letterSpacing: 1 }}>AI NEXT STEPS & SUGGESTIONS</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {result.suggestions.map((s, i) => (
-              <div key={i} style={{ display: "flex", gap: 12 }}>
-                <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(99,102,241,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#a78bfa", flexShrink: 0 }}>{i + 1}</div>
-                <span style={{ fontSize: 14, color: "#e5e7eb", lineHeight: 1.6 }}>{s}</span>
-              </div>
-            ))}
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {result.aiSummary && (
+            <div style={{ background: "linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(99, 102, 241, 0.05))", border: "1px solid rgba(167, 139, 250, 0.2)", borderRadius: 16, padding: 24 }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa", marginBottom: 12, letterSpacing: 1 }}>1. SUMMARY</div>
+              <div style={{ fontSize: 15, color: "white", lineHeight: 1.6 }}>{result.aiSummary}</div>
+            </div>
+          )}
+
+          <div style={{ background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)", borderRadius: 16, padding: 24 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#a78bfa", marginBottom: 16, letterSpacing: 1 }}>2. KEY RECOMMENDATIONS</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {result.suggestions.map((s, i) => (
+                <div key={i} style={{ display: "flex", gap: 12 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: "50%", background: "rgba(99,102,241,0.3)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 800, color: "#a78bfa", flexShrink: 0 }}>{i + 1}</div>
+                  <span style={{ fontSize: 14, color: "#e5e7eb", lineHeight: 1.6 }}>{s}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -440,7 +445,6 @@ export default function App() {
   const [activeCat, setActiveCat] = useState("All");
   const [sortBy, setSortBy] = useState("score");
   const [showSubmit, setShowSubmit] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
   const [currentIdea, setCurrentIdea] = useState(null);
   const [user, setUser] = useState(null); // User state
   const [chatMessages, setChatMessages] = useState([{ role: 'system', content: 'You are an expert startup advisor and idea validation AI. Help the user refine startup ideas, suggest improvements, and answer product strategy questions clearly.' }]);
@@ -461,7 +465,7 @@ export default function App() {
 
   const handleLogout = () => {
     setUser(null);
-    setPage("login");
+    setPage("home");
   };
 
   useEffect(() => {
@@ -763,7 +767,7 @@ export default function App() {
                 {/* Top 3 podium */}
                 <div style={{ display: "flex", gap: 12, justifyContent: "center", alignItems: "flex-end", marginBottom: 32, flexWrap: "wrap" }}>
                   {[LEADERBOARD[1], LEADERBOARD[0], LEADERBOARD[2]].map((item, pos) => {
-                    const heights = [80, 100, 70]; const colors = ["#9ca3af", "#f59e0b", "#cd7c2f"]; const realRanks = [2, 1, 3];
+                    const colors = ["#9ca3af", "#f59e0b", "#cd7c2f"]; const realRanks = [2, 1, 3];
                     return (
                       <div key={item.rank} style={{ width: 180, background: "rgba(255,255,255,0.04)", border: `1px solid ${pos === 1 ? "rgba(245,158,11,0.3)" : "rgba(255,255,255,0.07)"}`, borderRadius: 20, padding: "20px 16px", textAlign: "center", position: "relative", order: pos === 1 ? -1 : 0 }}>
                         {pos === 1 && <div style={{ position: "absolute", top: -10, left: "50%", transform: "translateX(-50%)", fontSize: 20 }}>👑</div>}

@@ -22,6 +22,8 @@ IMPORTANT RULES:
 - Avoid vague phrases like "great potential"
 - Focus on real-world feasibility, market demand, and risks
 - Think like an investor reviewing a startup pitch
+- CRITICAL: Provide highly specific, actionable recommendations. Do not say "identify target audience". Instead, analyze the provided audience and suggest EXACT pivot demographics or feature changes.
+- CRITICAL: Provide a full, comprehensive summary of the idea in your own words, highlighting the core value proposition.
 - CRITICAL: If the input consists of random keystrokes (e.g., "asdf", "ghjk"), gibberish, test data, or lacks any coherent business concept, you MUST output an overallScore, feasibilityScore, marketScore, and innovationScore of 10 or less.
 - CRITICAL: For gibberish input, set validation status to "INVALID" and state in the SWOT analysis that the input is random or invalid.
 
@@ -43,7 +45,7 @@ Then generate a JSON response with the following exact structure:
   "feasibilityScore": <integer 0-100>,
   "marketScore": <integer 0-100>,
   "innovationScore": <integer 0-100>,
-  "aiSummary": "A 2-3 sentence clear and professional summary of the idea.",
+  "aiSummary": "A full, comprehensive 3-5 sentence summary of the idea explaining the problem, the proposed solution, and the core value proposition.",
   "marketResearchReport": {
     "targetDemographic": "Who exactly will buy this",
     "competitors": ["Competitor A", "Competitor B"],
@@ -57,7 +59,7 @@ Then generate a JSON response with the following exact structure:
     "t": ["Threat 1", "Threat 2"]
   },
   "keyIssues": ["Issue 1", "Issue 2"],
-  "improvementSuggestions": ["Suggestion 1", "Suggestion 2", "Suggestion 3"],
+  "improvementSuggestions": ["Highly specific recommendation about target audience or pivot", "Highly specific feature addition or removal", "Specific go-to-market strategy step"],
   "prototypePlan": {
     "features": ["Feature 1", "Feature 2"],
     "techStack": ["Tech 1", "Tech 2"],
@@ -154,15 +156,15 @@ Target Audience: ${target}
         t: ["Existing industry players"]
       },
       suggestions: isShort ? [
-        "Please provide a real, detailed startup idea.",
-        "Your text is too short or looks like random input.",
-        "Ensure OpenRouter API Key is working."
+        "Please provide a real, detailed startup idea (e.g., 'An app for doctors to manage schedules').",
+        "Target Audience pivot: Your current input is too vague. Specify exact demographics.",
+        "Add a concrete monetization strategy instead of generic assumptions."
       ] : [
-        "Please check if OpenRouter API Key is set correctly.",
-        "Define your MVP features more clearly.",
-        "Identify 3 direct competitors."
+        "Target Audience pivot: You mentioned 'everyone'. Narrow this down to 'College students aged 18-24'.",
+        "Feature change: Remove the blockchain integration for now, it adds unnecessary complexity for an MVP.",
+        "Go-to-market: Focus entirely on TikTok marketing rather than expensive Google Ads."
       ],
-      aiSummary: isShort ? "" : "This is a mock summary of your startup idea. Please connect the AI to get real feedback.",
+      aiSummary: "Based on the input provided, this idea requires significant expansion. A full, comprehensive summary cannot be generated until a clear problem statement and proposed solution are provided. However, the core concept seems to revolve around the initial keywords entered.",
       marketResearchReport: isShort ? null : {
         targetDemographic: "Early adopters, mock target audience",
         competitors: ["Mock Competitor A", "Mock Competitor B"],

@@ -9,6 +9,9 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.get("/", (req, res) => {
+  res.send("IdeaForge Backend API is running! 🚀");
+});
 app.use("/ideas", require("./routes/ideaRoutes"));
 app.use("/api", require("./routes/aiRoutes"));
 app.use("/api/openroute", require("./routes/openrouteRoutes"));

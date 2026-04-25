@@ -58,7 +58,7 @@ async function testOpenRouter() {
     console.log('   🔴 Threats:');
     analysis.swot.t.forEach(t => console.log(`      • ${t}`));
 
-    console.log('\n🎉 Google Cloud AI Integration Test Completed Successfully!');
+    console.log('\n🎉 Mistral AI Integration Test Completed Successfully!');
     console.log('🤖 Your app now uses real AI for idea analysis!');
 
   } catch (error) {
