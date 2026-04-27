@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Login({ onLogin, onSwitchToSignup }) {
+function Login({ onLogin, onSwitchToSignup, onGoHome }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -51,14 +51,22 @@ function Login({ onLogin, onSwitchToSignup }) {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Unable to connect to the server. Please make sure the backend is running.");
+      setError("We’re having trouble connecting right now. Please try again in a moment");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0f", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+    <div style={{ minHeight: "100vh", background: "#0a0a0f", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, position: "relative" }}>
+      {onGoHome && (
+        <button 
+          onClick={onGoHome}
+          style={{ position: "absolute", top: 24, left: 24, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "10px 16px", color: "#9ca3af", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "all .2s" }}
+        >
+          ← Back to Home
+        </button>
+      )}
       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 40, width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ width: 64, height: 64, borderRadius: 16, background: "linear-gradient(135deg,#6366f1,#a855f7)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 24 }}>💡</div>

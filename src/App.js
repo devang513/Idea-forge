@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import IdeaDetail from "./pages/IdeaDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import AdminPortal from "./pages/AdminPortal";
 
 /* ═══════════════════════════════════════════════════════════
    DATA & CONSTANTS
@@ -455,7 +456,11 @@ export default function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
-    setPage("home");
+    if (userData.role === 'admin') {
+      setPage("admin");
+    } else {
+      setPage("home");
+    }
   };
 
   const handleSignup = (userData) => {
@@ -588,15 +593,19 @@ export default function App() {
     { id: "chat", label: "AI Chat" },
   ];
 
+  if (user && user.role === 'admin') {
+    navItems.push({ id: "admin", label: "Admin Portal" });
+  }
+
   return (
     <>
       {/* Auth Pages */}
       {page === "login" && !user && (
-        <Login onLogin={handleLogin} onSwitchToSignup={() => setPage("signup")} />
+        <Login onLogin={handleLogin} onSwitchToSignup={() => setPage("signup")} onGoHome={() => setPage("home")} />
       )}
 
       {page === "signup" && !user && (
-        <Signup onSignup={handleSignup} onSwitchToLogin={() => setPage("login")} />
+        <Signup onSignup={handleSignup} onSwitchToLogin={() => setPage("login")} onGoHome={() => setPage("home")} />
       )}
 
       {/* Main App */}
@@ -655,6 +664,11 @@ export default function App() {
               </div>
             </div>
           </nav>
+
+          {/* ── ADMIN PORTAL ─────────────────────────────── */}
+          {page === "admin" && user && user.role === 'admin' && (
+            <AdminPortal />
+          )}
 
           {/* ── IDEA DETAIL PAGE ─────────────────────── */}
           {page === "idea" && currentIdea && (

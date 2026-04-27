@@ -11,6 +11,8 @@ const ideaSchema = new mongoose.Schema({
   innovation: Number,
   swot: Object,
   author: String,
+  votes: { type: Number, default: 0 },
+  comments: { type: Array, default: [] },
   createdAt: { type: Date, default: Date.now }
 });
 

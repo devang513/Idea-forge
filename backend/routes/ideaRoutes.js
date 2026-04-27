@@ -36,4 +36,34 @@ router.post("/", async (req, res) => {
   }
 });
 
+// POST vote for an idea
+router.post("/:id/vote", async (req, res) => {
+  try {
+    if (req.app.locals.useMockDb || require("mongoose").connection.readyState !== 1) {
+      const idea = await mockDb.ideaUpdateVote(req.params.id);
+      return res.json(idea);
+    }
+    const idea = await Idea.findByIdAndUpdate(req.params.id, { $inc: { votes: 1 } }, { new: true });
+    res.json(idea);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// POST comment to an idea
+router.post("/:id/comment", async (req, res) => {
+  try {
+    const { author, text, time } = req.body;
+    const comment = { author, text, time };
+    if (req.app.locals.useMockDb || require("mongoose").connection.readyState !== 1) {
+      const idea = await mockDb.ideaAddComment(req.params.id, comment);
+      return res.json(idea);
+    }
+    const idea = await Idea.findByIdAndUpdate(req.params.id, { $push: { comments: comment } }, { new: true });
+    res.json(idea);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

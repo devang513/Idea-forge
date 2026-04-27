@@ -5,6 +5,39 @@ class AIService {
     this.openRouterKey = process.env.OPENROUTER_API_KEY;
   }
 
+  async getCompetitors(query) {
+    if (!process.env.SERP_API_KEY) {
+      console.warn("SERP_API_KEY missing, skipping competitors search.");
+      return [];
+    }
+    try {
+      const response = await axios.get('https://serpapi.com/search.json', {
+        params: {
+          q: query,
+          api_key: process.env.SERP_API_KEY
+        }
+      });
+      if (response.data && response.data.organic_results) {
+        return response.data.organic_results.slice(0, 5).map(result => result.title);
+      }
+      return [];
+    } catch (error) {
+      console.error("SERP API error:", error.message);
+      return [];
+    }
+  }
+
+  getTrendSignal(text) {
+    const lowerText = text.toLowerCase();
+    if (lowerText.includes('ai')) {
+      return "AI adoption is rapidly growing globally";
+    }
+    if (lowerText.includes('fintech')) {
+      return "Fintech usage is increasing with digital payments";
+    }
+    return "Market trend data unavailable but digital adoption is increasing";
+  }
+
   async analyzeIdea(title, description, target) {
     if (!this.openRouterKey) {
       console.warn('OPENROUTER_API_KEY is missing. Using mock analysis.');
@@ -12,6 +45,15 @@ class AIService {
     }
 
     try {
+      const query = title + " " + description;
+      const competitors = await this.getCompetitors(query);
+      const trend = this.getTrendSignal(query);
+      
+      const marketData = {
+        competitors,
+        trend
+      };
+
       const prompt = `
 You are an expert startup advisor and idea validation AI.
 
@@ -23,9 +65,39 @@ IMPORTANT RULES:
 - Focus on real-world feasibility, market demand, and risks
 - Think like an investor reviewing a startup pitch
 - CRITICAL: Provide highly specific, actionable recommendations. Do not say "identify target audience". Instead, analyze the provided audience and suggest EXACT pivot demographics or feature changes.
-- CRITICAL: Provide a full, comprehensive summary of the idea in your own words, highlighting the core value proposition.
 - CRITICAL: If the input consists of random keystrokes (e.g., "asdf", "ghjk"), gibberish, test data, or lacks any coherent business concept, you MUST output an overallScore, feasibilityScore, marketScore, and innovationScore of 10 or less.
 - CRITICAL: For gibberish input, set validation status to "INVALID" and state in the SWOT analysis that the input is random or invalid.
+
+Here is REAL market data:
+${JSON.stringify(marketData)}
+
+MARKET DATA RULES:
+- ONLY use provided competitors
+- DO NOT invent companies
+- If competitors empty -> say "no strong competitors found"
+- If data missing -> say "data not available"
+- Do NOT generate fake market size numbers
+- Explain demand logically instead of numbers
+
+SUMMARY GENERATION INSTRUCTION:
+Generate a detailed startup summary (5–7 sentences) that includes:
+* Problem explanation
+* Solution explanation
+* Value proposition
+* Specific target users
+* Market context using trend
+
+Rules for summary:
+* No generic phrases like 'great potential'
+* Be realistic and specific
+* Avoid repetition
+* Start directly with problem
+* Mention limitations if idea is weak
+
+OUTPUT CONSTRAINTS:
+- marketResearchReport.competitors must come from provided data
+- trends must use provided trend signal
+- summary must be detailed and non-generic
 
 Analyze the idea based on:
 1. Problem clarity (Is there a real problem?)
@@ -45,11 +117,11 @@ Then generate a JSON response with the following exact structure:
   "feasibilityScore": <integer 0-100>,
   "marketScore": <integer 0-100>,
   "innovationScore": <integer 0-100>,
-  "aiSummary": "A full, comprehensive 3-5 sentence summary of the idea explaining the problem, the proposed solution, and the core value proposition.",
+  "aiSummary": "Your generated 5-7 sentence detailed startup summary based on the SUMMARY GENERATION INSTRUCTION.",
   "marketResearchReport": {
     "targetDemographic": "Who exactly will buy this",
     "competitors": ["Competitor A", "Competitor B"],
-    "marketSize": "Estimated market size/potential",
+    "marketSize": "Estimated market size/potential explained logically",
     "trends": ["Relevant Trend 1", "Relevant Trend 2"]
   },
   "swot": {

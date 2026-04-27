@@ -44,11 +44,41 @@ function MiniBar({ val, color }) {
 function IdeaDetail({ idea, onClose }) {
   const [tab, setTab] = useState("overview");
   const [voted, setVoted] = useState(false);
+  const [voteCount, setVoteCount] = useState(idea.votes || 0);
   const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([
+  const [comments, setComments] = useState(idea.comments && idea.comments.length > 0 ? idea.comments : [
     { author:"Meera J.", text:"Excellent market sizing! Have you considered the insurance angle?", time:"2h ago" },
     { author:"Arjun K.", text:"This aligns with what we're seeing in ESG investing. Strong opportunity.", time:"1d ago" },
   ]);
+
+  const handleVote = async () => {
+    if (voted) return; // Prevent multiple votes locally
+    setVoted(true);
+    setVoteCount(v => v + 1);
+    try {
+      await fetch(`http://localhost:5001/ideas/${idea._id || idea.id}/vote`, {
+        method: 'POST'
+      });
+    } catch (e) {
+      console.error("Failed to save vote", e);
+    }
+  };
+
+  const handlePostComment = async () => {
+    if (!comment.trim()) return;
+    const newComment = { author: "You", text: comment, time: "just now" };
+    setComments(p => [...p, newComment]);
+    setComment("");
+    try {
+      await fetch(`http://localhost:5001/ideas/${idea._id || idea.id}/comment`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newComment)
+      });
+    } catch (e) {
+      console.error("Failed to save comment", e);
+    }
+  };
 
   const tabs = ["overview","swot","feedback","mentors"];
 
@@ -152,7 +182,7 @@ function IdeaDetail({ idea, onClose }) {
             </div>
             <div>
               <textarea value={comment} onChange={e=>setComment(e.target.value)} rows={3} placeholder="Add your feedback or question…" style={{...inp,marginBottom:8}}/>
-              <button onClick={()=>{if(comment.trim()){setComments(p=>[...p,{author:"You",text:comment,time:"just now"}]);setComment("");}}} style={{...btn,padding:"10px"}}>Post Feedback</button>
+              <button onClick={handlePostComment} style={{...btn,padding:"10px"}}>Post Feedback</button>
             </div>
           </div>
         )}
@@ -178,8 +208,8 @@ function IdeaDetail({ idea, onClose }) {
 
       {/* Footer actions */}
       <div style={{padding:"14px 20px",borderTop:"1px solid rgba(255,255,255,0.07)",display:"flex",gap:10,flexShrink:0}}>
-        <button onClick={()=>setVoted(v=>!v)} style={{flex:1,background:voted?"rgba(99,102,241,0.2)":"rgba(255,255,255,0.05)",border:`1px solid ${voted?"rgba(99,102,241,0.5)":"rgba(255,255,255,0.1)"}`,borderRadius:12,padding:10,color:voted?"#a78bfa":"#9ca3af",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
-          {voted?"❤️":"🤍"} {idea.votes + (voted?1:0)}
+        <button onClick={handleVote} style={{flex:1,background:voted?"rgba(99,102,241,0.2)":"rgba(255,255,255,0.05)",border:`1px solid ${voted?"rgba(99,102,241,0.5)":"rgba(255,255,255,0.1)"}`,borderRadius:12,padding:10,color:voted?"#a78bfa":"#9ca3af",fontWeight:600,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
+          {voted?"❤️":"🤍"} {voteCount}
         </button>
         <button onClick={() => setTab("feedback")} style={{flex:2,background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:12,padding:10,color:"white",fontWeight:700,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
           💬 Give Feedback

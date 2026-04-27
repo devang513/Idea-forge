@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-function Signup({ onSignup, onSwitchToLogin }) {
+function Signup({ onSignup, onSwitchToLogin, onGoHome }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("user");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +50,7 @@ function Signup({ onSignup, onSwitchToLogin }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name, email, password, role }),
       });
 
       const data = await response.json();
@@ -62,14 +63,22 @@ function Signup({ onSignup, onSwitchToLogin }) {
       }
     } catch (err) {
       console.error("Signup error:", err);
-      setError("Unable to connect to the server. Please make sure the backend is running.");
+      setError("We’re having trouble connecting right now. Please try again in a moment");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0a0f", display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+    <div style={{ minHeight: "100vh", background: "#0a0a0f", display: "flex", alignItems: "center", justifyContent: "center", padding: 20, position: "relative" }}>
+      {onGoHome && (
+        <button 
+          onClick={onGoHome}
+          style={{ position: "absolute", top: 24, left: 24, background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "10px 16px", color: "#9ca3af", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "all .2s" }}
+        >
+          ← Back to Home
+        </button>
+      )}
       <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 24, padding: 40, width: "100%", maxWidth: 400 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
           <div style={{ width: 64, height: 64, borderRadius: 16, background: "linear-gradient(135deg,#6366f1,#a855f7)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 24 }}>🚀</div>
@@ -129,6 +138,26 @@ function Signup({ onSignup, onSwitchToLogin }) {
               disabled={loading}
               style={{ width: "100%", padding: "12px 16px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "white", fontSize: 14, outline: "none", opacity: loading ? 0.5 : 1 }}
             />
+          </div>
+
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: "white", marginBottom: 12 }}>I am signing up as a...</label>
+            <div style={{ display: "flex", gap: 12 }}>
+              <button
+                type="button"
+                onClick={() => setRole('user')}
+                style={{ flex: 1, padding: "10px", borderRadius: 10, background: role === 'user' ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.05)", border: role === 'user' ? "1px solid #818cf8" : "1px solid rgba(255,255,255,0.1)", color: role === 'user' ? "white" : "#9ca3af", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "all .2s" }}
+              >
+                Founder
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole('mentor')}
+                style={{ flex: 1, padding: "10px", borderRadius: 10, background: role === 'mentor' ? "rgba(16,185,129,0.2)" : "rgba(255,255,255,0.05)", border: role === 'mentor' ? "1px solid #34d399" : "1px solid rgba(255,255,255,0.1)", color: role === 'mentor' ? "white" : "#9ca3af", fontWeight: 600, fontSize: 14, cursor: "pointer", transition: "all .2s" }}
+              >
+                Mentor
+              </button>
+            </div>
           </div>
 
           <button

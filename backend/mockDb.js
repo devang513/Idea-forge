@@ -5,7 +5,8 @@ class MockDatabase {
   constructor() {
     this.users = [
       { _id: 'user_1', name: 'Alice Chen', email: 'alice@founder.com', role: 'founder' },
-      { _id: 'user_2', name: 'Bob Smith', email: 'bob@investor.com', role: 'investor' }
+      { _id: 'user_2', name: 'Bob Smith', email: 'bob@investor.com', role: 'investor' },
+      { _id: 'admin_1', name: 'Admin', email: 'admin@ideaforge.com', password: '$2b$10$m6IZAPZEw18s0G5QOUr52.aWNJdHXKBI7GhR8AUt7GINs7By863tO', role: 'admin' }
     ];
     this.ideas = [
       {
@@ -288,6 +289,16 @@ class MockDatabase {
     return null;
   }
 
+  async userFindAll() {
+    return this.users;
+  }
+
+  async userDelete(id) {
+    const initialLength = this.users.length;
+    this.users = this.users.filter(u => u._id !== id);
+    return this.users.length < initialLength;
+  }
+
   async userSave(userData) {
     const newUser = {
       ...userData,
@@ -312,6 +323,25 @@ class MockDatabase {
     };
     this.ideas.push(newIdea);
     return newIdea;
+  }
+
+  async ideaUpdateVote(id) {
+    const idea = this.ideas.find(i => i._id === id);
+    if (idea) {
+      idea.votes = (idea.votes || 0) + 1;
+      return idea;
+    }
+    return null;
+  }
+
+  async ideaAddComment(id, comment) {
+    const idea = this.ideas.find(i => i._id === id);
+    if (idea) {
+      if (!idea.comments) idea.comments = [];
+      idea.comments.push(comment);
+      return idea;
+    }
+    return null;
   }
 }
 
