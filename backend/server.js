@@ -47,23 +47,8 @@ async function connectToDatabase() {
 }
 
 // Routes
-app.get("/", async (req, res) => {
-  try {
-    await connectToDatabase();
-  } catch (e) {
-    // Continue even on error to show the debug info
-  }
-
-  const status = mongoose.connection.readyState === 1 ? "Connected ✅" : "Disconnected (Mock Mode) ❌";
-  res.json({
-    message: "IdeaForge Backend API is running! 🚀",
-    database: status,
-    debugInfo: {
-      hasURI: !!process.env.MONGODB_URI,
-      readyState: mongoose.connection.readyState,
-      lastError: lastError ? lastError.message : "None"
-    }
-  });
+app.get("/", (req, res) => {
+  res.json({ message: "IdeaForge Backend API is running! 🚀" });
 });
 
 // Middleware to ensure DB connection for all API routes
