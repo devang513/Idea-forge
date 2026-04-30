@@ -8,13 +8,26 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let dbError = null;
+let maskedURI = "Not Found";
+
+if (process.env.MONGODB_URI) {
+  // Show only first 15 chars for security
+  maskedURI = process.env.MONGODB_URI.substring(0, 15) + "...";
+}
+
 // Routes
 app.get("/", (req, res) => {
   const status = mongoose.connection.readyState === 1 ? "Connected ✅" : "Disconnected (Mock Mode) ❌";
   res.json({
     message: "IdeaForge Backend API is running! 🚀",
     database: status,
-    environment: process.env.NODE_ENV || "development"
+    debugInfo: {
+      hasURI: !!process.env.MONGODB_URI,
+      uriStart: maskedURI,
+      lastError: dbError ? dbError.message : "None",
+      readyState: mongoose.connection.readyState
+    }
   });
 });
 app.use("/ideas", require("./routes/ideaRoutes"));
@@ -28,25 +41,16 @@ app.locals.useMockDb = false;
 
 const MONGO_URI = process.env.MONGODB_URI;
 
-if (!MONGO_URI) {
-  console.log("⚠️ WARNING: MONGODB_URI environment variable is not set!");
-  console.log("Falling back to local mongodb://localhost:27017/ideaforge (This will fail on Vercel)");
-} else {
-  console.log("📍 Attempting to connect to MongoDB Atlas...");
-}
-
-const connectionString = MONGO_URI || "mongodb://localhost:27017/ideaforge";
-
-mongoose.connect(connectionString, {
-  serverSelectionTimeoutMS: 5000 // 5 seconds timeout
+mongoose.connect(MONGO_URI || "mongodb://localhost:27017/ideaforge", {
+  serverSelectionTimeoutMS: 5000 
 })
 .then(() => {
   console.log("✅ MongoDB Connected Successfully");
+  dbError = null;
 })
 .catch(err => {
-  console.log("❌ MongoDB Connection Error!");
-  console.log("Error details:", err.message);
-  console.log("TIP: If you are on Vercel, check if you whitelisted 0.0.0.0/0 in MongoDB Atlas Network Access.");
+  console.log("❌ MongoDB Connection Error:", err.message);
+  dbError = err;
   app.locals.useMockDb = true;
 });
 
