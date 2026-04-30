@@ -10,7 +10,12 @@ app.use(express.json());
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("IdeaForge Backend API is running! 🚀");
+  const status = mongoose.connection.readyState === 1 ? "Connected ✅" : "Disconnected (Mock Mode) ❌";
+  res.json({
+    message: "IdeaForge Backend API is running! 🚀",
+    database: status,
+    environment: process.env.NODE_ENV || "development"
+  });
 });
 app.use("/ideas", require("./routes/ideaRoutes"));
 app.use("/api", require("./routes/aiRoutes"));
@@ -21,17 +26,27 @@ app.use("/api/auth", require("./routes/authRoutes"));
 // MongoDB connection
 app.locals.useMockDb = false;
 
-const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/ideaforge";
+const MONGO_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGO_URI, {
+if (!MONGO_URI) {
+  console.log("⚠️ WARNING: MONGODB_URI environment variable is not set!");
+  console.log("Falling back to local mongodb://localhost:27017/ideaforge (This will fail on Vercel)");
+} else {
+  console.log("📍 Attempting to connect to MongoDB Atlas...");
+}
+
+const connectionString = MONGO_URI || "mongodb://localhost:27017/ideaforge";
+
+mongoose.connect(connectionString, {
   serverSelectionTimeoutMS: 5000 // 5 seconds timeout
 })
 .then(() => {
-  console.log("MongoDB Connected");
+  console.log("✅ MongoDB Connected Successfully");
 })
 .catch(err => {
-  console.log("!!! MongoDB connection error. Switching to Mock DB fallback !!!");
+  console.log("❌ MongoDB Connection Error!");
   console.log("Error details:", err.message);
+  console.log("TIP: If you are on Vercel, check if you whitelisted 0.0.0.0/0 in MongoDB Atlas Network Access.");
   app.locals.useMockDb = true;
 });
 
