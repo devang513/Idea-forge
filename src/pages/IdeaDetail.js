@@ -56,7 +56,7 @@ function IdeaDetail({ idea, onClose }) {
     setVoted(true);
     setVoteCount(v => v + 1);
     try {
-      await fetch(`http://localhost:5001/ideas/${idea._id || idea.id}/vote`, {
+      await fetch(`https://idea-forge-991a.vercel.app/ideas/${idea._id || idea.id}/vote`, {
         method: 'POST'
       });
     } catch (e) {
@@ -70,7 +70,7 @@ function IdeaDetail({ idea, onClose }) {
     setComments(p => [...p, newComment]);
     setComment("");
     try {
-      await fetch(`http://localhost:5001/ideas/${idea._id || idea.id}/comment`, {
+      await fetch(`https://idea-forge-991a.vercel.app/ideas/${idea._id || idea.id}/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newComment)

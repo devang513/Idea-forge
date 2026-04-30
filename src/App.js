@@ -103,7 +103,7 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
   const analyze = async () => {
     setAnalyzing(true);
     try {
-      const response = await fetch('http://localhost:5001/api/analyze-idea', {
+      const response = await fetch('https://idea-forge-991a.vercel.app/api/analyze-idea', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -485,7 +485,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetch('http://localhost:5001/ideas')
+    fetch('https://idea-forge-991a.vercel.app/ideas')
       .then(response => response.json())
       .then(data => {
         const enrichedIdeas = data.map(idea => ({
@@ -515,7 +515,7 @@ export default function App() {
 
   const addIdea = async (raw) => {
     try {
-      const response = await fetch('http://localhost:5001/ideas', {
+      const response = await fetch('https://idea-forge-991a.vercel.app/ideas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -569,7 +569,7 @@ export default function App() {
     setChatLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5001/api/gpt/chat', {
+      const response = await fetch('https://idea-forge-991a.vercel.app/api/gpt/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

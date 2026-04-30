@@ -7,7 +7,7 @@ function AdminPortal() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/auth/users');
+      const response = await fetch('https://idea-forge-991a.vercel.app/api/auth/users');
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
       setUsers(data);
@@ -26,7 +26,7 @@ function AdminPortal() {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     
     try {
-      const response = await fetch(`http://localhost:5001/api/auth/users/${id}`, {
+      const response = await fetch(`https://idea-forge-991a.vercel.app/api/auth/users/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete user');
