@@ -37,6 +37,11 @@ mongoose.connect(MONGO_URI, {
 
 // Start server
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} (Version: 1.2 - Mock Fix)`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT} (Version: 1.2 - Mock Fix)`);
+  });
+}
+
+// Export the Express API
+module.exports = app;
