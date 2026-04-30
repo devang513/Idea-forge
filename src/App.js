@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import IdeaDetail from "./pages/IdeaDetail";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -453,6 +453,17 @@ export default function App() {
   const [chatLoading, setChatLoading] = useState(false);
   const [chatModel, setChatModel] = useState('mistralai/mistral-7b-instruct:free');
   const [hasResult, setHasResult] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (page === "chat") {
+      scrollToBottom();
+    }
+  }, [chatMessages, page]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -575,7 +586,8 @@ export default function App() {
         const assistant = data.choices[0].message || { role: 'assistant', content: data.choices[0].message?.content || '' };
         setChatMessages(prev => [...prev, { role: 'assistant', content: assistant.content || 'Mistral responded with no text.' }]);
       } else {
-        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Mistral did not return a valid response. Please try again.' }]);
+        const errorMsg = data.error?.message || data.error || 'Mistral did not return a valid response. Please try again.';
+        setChatMessages(prev => [...prev, { role: 'assistant', content: `Error: ${errorMsg}` }]);
       }
     } catch (error) {
       console.error('Mistral request failed:', error);
@@ -842,7 +854,7 @@ export default function App() {
                         <div style={{ textAlign: "center" }}><div style={{ fontSize: 16, fontWeight: 700, color: "#f59e0b" }}>⭐ {m.rating}</div><div style={{ fontSize: 10, color: "#6b7280" }}>Rating</div></div>
                         <div style={{ textAlign: "center" }}><div style={{ fontSize: 16, fontWeight: 700, color: "#a78bfa" }}>{m.sessions}</div><div style={{ fontSize: 10, color: "#6b7280" }}>Sessions</div></div>
                       </div>
-                      <button style={{ width: "100%", background: m.available ? "linear-gradient(135deg,#6366f1,#a855f7)" : "rgba(255,255,255,0.06)", border: m.available ? "none" : "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "10px", color: m.available ? "white" : "#6b7280", fontWeight: 700, fontSize: 13, cursor: m.available ? "pointer" : "not-allowed", fontFamily: "inherit" }}>
+                      <button onClick={() => m.available && alert(`Session requested with ${m.name}! They will contact you shortly.`)} style={{ width: "100%", background: m.available ? "linear-gradient(135deg,#6366f1,#a855f7)" : "rgba(255,255,255,0.06)", border: m.available ? "none" : "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "10px", color: m.available ? "white" : "#6b7280", fontWeight: 700, fontSize: 13, cursor: m.available ? "pointer" : "not-allowed", fontFamily: "inherit" }}>
                         {m.available ? "Request Session →" : "Currently Unavailable"}
                       </button>
                     </div>
@@ -942,6 +954,7 @@ export default function App() {
                     {chatMessages.filter(m => m.role !== 'system').map((message, index) => (
                       <ChatBubble key={`${message.role}-${index}`} message={message} />
                     ))}
+                    <div ref={messagesEndRef} />
                   </div>
 
                   <div style={{ display: "flex", gap: 10, alignItems: "stretch", flexWrap: "wrap" }}>

@@ -2,9 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
-
 router.get('/status', (req, res) => {
+  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
   if (!OPENROUTER_API_KEY) {
     return res.status(500).json({
       success: false,
@@ -20,6 +19,7 @@ router.get('/status', (req, res) => {
 });
 
 router.post('/chat', async (req, res) => {
+  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
   if (!OPENROUTER_API_KEY) {
     return res.status(500).json({
       success: false,

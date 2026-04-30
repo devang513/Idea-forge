@@ -199,6 +199,9 @@ function IdeaDetail({ idea, onClose }) {
                     <span style={{fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:99,background:m.available?"rgba(16,185,129,0.15)":"rgba(107,114,128,0.15)",color:m.available?"#10b981":"#6b7280"}}>{m.available?"Available":"Busy"}</span>
                   </div>
                   <div style={{fontSize:11,color:"#6b7280",marginTop:4}}>⭐ {m.rating} · {m.sessions} sessions</div>
+                  <button onClick={() => m.available && alert(`Session requested with ${m.name}! They will contact you shortly.`)} style={{ marginTop: 10, width: "100%", background: m.available ? "linear-gradient(135deg,#6366f1,#a855f7)" : "rgba(255,255,255,0.06)", border: m.available ? "none" : "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "6px", color: m.available ? "white" : "#6b7280", fontWeight: 700, fontSize: 11, cursor: m.available ? "pointer" : "not-allowed", fontFamily: "inherit" }}>
+                    {m.available ? "Request Session →" : "Currently Unavailable"}
+                  </button>
                 </div>
               </div>
             ))}
