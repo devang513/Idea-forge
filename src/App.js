@@ -215,7 +215,7 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
                 
                 <div>
                   <div style={{ fontSize: 12, color: "#9ca3af", marginBottom: 4 }}>Estimated Market Size</div>
-                  <div style={{ fontSize: 14, color: "white" }}>{result.marketResearchReport.marketSize}</div>
+                  <div style={{ fontSize: 14, color: "white" }}>{result.marketResearchReport.estimatedMarketSize}</div>
                 </div>
               </div>
               
@@ -234,6 +234,23 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
                   </ul>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {result.pastFailures && result.pastFailures.length > 0 && (
+          <div style={{ background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: 16, padding: 24 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#ef4444", marginBottom: 16, letterSpacing: 1 }}>PAST FAILURES & LESSONS LEARNED</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {result.pastFailures.map((f, i) => (
+                <div key={i} style={{ borderLeft: "2px solid #ef4444", paddingLeft: 16 }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 4 }}>{f.name}</div>
+                  <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 8 }}><span style={{ color: "#ef4444" }}>Failure Reason:</span> {f.reason}</div>
+                  <div style={{ fontSize: 13, color: "#d1d5db", fontStyle: "italic", background: "rgba(255,255,255,0.03)", padding: "8px 12px", borderRadius: 8 }}>
+                    <span style={{ fontWeight: 700, color: "#10b981" }}>Key Lesson:</span> {f.lesson}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
