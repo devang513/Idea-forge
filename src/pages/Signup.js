@@ -43,9 +43,12 @@ function Signup({ onSignup, onSwitchToLogin, onGoHome }) {
       return;
     }
 
-    setLoading(true);
+    const API_BASE_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5001' 
+      : 'https://idea-forge-991a.vercel.app';
+
     try {
-      const response = await fetch('https://idea-forge-991a.vercel.app/api/auth/signup', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

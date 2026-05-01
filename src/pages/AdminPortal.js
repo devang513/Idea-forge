@@ -5,9 +5,13 @@ function AdminPortal() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:5001' 
+    : 'https://idea-forge-991a.vercel.app';
+
   const fetchUsers = async () => {
     try {
-      const response = await fetch('https://idea-forge-991a.vercel.app/api/auth/users');
+      const response = await fetch(`${API_BASE_URL}/api/auth/users`);
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
       setUsers(data);
@@ -26,7 +30,7 @@ function AdminPortal() {
     if (!window.confirm("Are you sure you want to delete this user?")) return;
     
     try {
-      const response = await fetch(`https://idea-forge-991a.vercel.app/api/auth/users/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/users/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) throw new Error('Failed to delete user');

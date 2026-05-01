@@ -55,8 +55,12 @@ function IdeaDetail({ idea, onClose }) {
     if (voted) return; // Prevent multiple votes locally
     setVoted(true);
     setVoteCount(v => v + 1);
+    const API_BASE_URL = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5001' 
+      : 'https://idea-forge-991a.vercel.app';
+      
     try {
-      await fetch(`https://idea-forge-991a.vercel.app/ideas/${idea._id || idea.id}/vote`, {
+      await fetch(`${API_BASE_URL}/ideas/${idea._id || idea.id}/vote`, {
         method: 'POST'
       });
     } catch (e) {
@@ -70,7 +74,7 @@ function IdeaDetail({ idea, onClose }) {
     setComments(p => [...p, newComment]);
     setComment("");
     try {
-      await fetch(`https://idea-forge-991a.vercel.app/ideas/${idea._id || idea.id}/comment`, {
+      await fetch(`${API_BASE_URL}/ideas/${idea._id || idea.id}/comment`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newComment)
