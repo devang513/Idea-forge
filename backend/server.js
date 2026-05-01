@@ -5,7 +5,11 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 let cachedDb = null;
@@ -18,30 +22,19 @@ async function connectToDatabase() {
 
   console.log("📍 Connecting to MongoDB...");
   try {
-    const opts = {
-      serverSelectionTimeoutMS: 5000,
-    };
-    
-    // If we're already connecting, don't start a new connection
-    if (mongoose.connection.readyState === 2) {
-      console.log("⏳ Connection already in progress, waiting...");
-      await new Promise((resolve, reject) => {
-        const check = setInterval(() => {
-          if (mongoose.connection.readyState === 1) { clearInterval(check); resolve(); }
-          if (mongoose.connection.readyState === 0) { clearInterval(check); reject(new Error("Connection failed")); }
-        }, 100);
-        setTimeout(() => { clearInterval(check); reject(new Error("Timeout waiting for connection")); }, 5000);
-      });
-      return mongoose.connection;
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      console.warn("⚠️ MONGODB_URI missing, using Mock DB mode");
+      throw new Error("No URI");
     }
-
-    cachedDb = await mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/ideaforge", opts);
+    
+    cachedDb = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+    });
     console.log("✅ MongoDB Connected!");
-    lastError = null;
     return cachedDb;
   } catch (e) {
     console.error("❌ MongoDB Connection Error:", e.message);
-    lastError = e;
     throw e;
   }
 }
