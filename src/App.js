@@ -103,7 +103,7 @@ function SubmitModal({ onClose, onSubmit, onResult }) {
   const analyze = async () => {
     setAnalyzing(true);
     try {
-      const response = await fetch('https://idea-forge-991a.vercel.app/api/analyze-idea', {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-idea`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -439,6 +439,10 @@ function IdeaCard({ idea, onClick, index }) {
 /* ═══════════════════════════════════════════════════════════
    MAIN APP
 ═══════════════════════════════════════════════════════════ */
+const API_BASE_URL = window.location.hostname === 'localhost' 
+  ? 'http://localhost:5001' 
+  : 'https://idea-forge-991a.vercel.app';
+
 export default function App() {
   const [page, setPage] = useState("home");
   const [ideas, setIdeas] = useState([]);
@@ -451,7 +455,7 @@ export default function App() {
   const [chatMessages, setChatMessages] = useState([{ role: 'system', content: 'You are an expert startup advisor and idea validation AI. Help the user refine startup ideas, suggest improvements, and answer product strategy questions clearly.' }]);
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
-  const [chatModel, setChatModel] = useState('mistralai/mistral-7b-instruct:free');
+  const [chatModel, setChatModel] = useState('mistralai/mistral-7b-instruct-v0.1');
   const [hasResult, setHasResult] = useState(false);
   const messagesEndRef = useRef(null);
 
@@ -485,7 +489,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    fetch('https://idea-forge-991a.vercel.app/ideas')
+    fetch(`${API_BASE_URL}/ideas`)
       .then(response => response.json())
       .then(data => {
         const enrichedIdeas = data.map(idea => ({
@@ -515,7 +519,7 @@ export default function App() {
 
   const addIdea = async (raw) => {
     try {
-      const response = await fetch('https://idea-forge-991a.vercel.app/ideas', {
+      const response = await fetch(`${API_BASE_URL}/ideas`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -569,7 +573,7 @@ export default function App() {
     setChatLoading(true);
 
     try {
-      const response = await fetch('https://idea-forge-991a.vercel.app/api/gpt/chat', {
+      const response = await fetch(`${API_BASE_URL}/api/gpt/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -934,9 +938,9 @@ export default function App() {
                   <div style={{display:"flex",gap:10,alignItems:"center"}}>
                     <span style={{fontSize:12,color:"#6b7280"}}>Model:</span>
                     <select value={chatModel} onChange={e=>setChatModel(e.target.value)} style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:12,padding:"10px 14px",color:"white",fontSize:13,outline:"none",cursor:"pointer"}}>
-                      <option value="mistralai/mistral-7b-instruct:free">Mistral 7B Instruct</option>
-                      <option value="mistralai/mixtral-8x7b-instruct">Mixtral 8x7B</option>
+                      <option value="mistralai/mistral-7b-instruct-v0.1">Mistral 7B (Fast)</option>
                       <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
+                      <option value="openrouter/auto">Auto (Best Available)</option>
                     </select>
                   </div>
                 </div>
@@ -945,7 +949,7 @@ export default function App() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "#a78bfa", letterSpacing: 1.5, marginBottom: 6 }}>LIVE CHAT</div>
-                      <div style={{fontSize:14,color:"#d1d5db"}}>Your conversation is sent to the backend and forwarded to OpenRouter.</div>
+
                     </div>
                     <div style={{ fontSize: 12, color: chatLoading ? "#fbbf24" : "#6b7280" }}>{chatLoading ? 'Thinking...' : 'Ready to chat'}</div>
                   </div>

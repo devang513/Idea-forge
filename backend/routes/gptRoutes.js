@@ -27,7 +27,7 @@ router.post('/chat', async (req, res) => {
     });
   }
 
-  const { messages, model = 'mistralai/mistral-7b-instruct:free', temperature = 0.7, max_tokens = 1000 } = req.body;
+  const { messages, model = 'mistralai/mistral-7b-instruct-v0.1', temperature = 0.7, max_tokens = 1000 } = req.body;
 
   if (!Array.isArray(messages) || messages.length === 0) {
     return res.status(400).json({
