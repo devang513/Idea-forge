@@ -14,36 +14,53 @@ class AIService {
 
     try {
       const idea = `Title: ${title}\nDescription: ${description}\nTarget: ${target}`;
+      
+      const prompt = `
+Act as a strict startup investor and advisor.
+Analyze this idea:
+${idea}
 
-      // 🔹 Step 1: Structured Analysis
-      const analysisData = await this.basicAnalysis(idea);
+Return a single JSON object with:
+1. overallScore, feasibilityScore, marketScore, innovationScore (0-100)
+2. swot (s, w, o, t arrays)
+3. keyIssues (array)
+4. summary (3-4 sentences explaining problem, solution, value)
+5. recommendations (3 specific actionable items)
+6. market (target demographic, competitors list, industry trends list)
+7. validation (status: "STRONG", "MODERATE", or "WEAK"; reason: short text)
 
-      // 🔹 Step 2: Summary + Recommendations + Market
-      const finalData = await this.generateSummaryAndSuggestions(
-        analysisData,
-        idea
-      );
+Return ONLY JSON:
+{
+  "overallScore": 0,
+  "feasibilityScore": 0,
+  "marketScore": 0,
+  "innovationScore": 0,
+  "swot": { "s": [], "w": [], "o": [], "t": [] },
+  "keyIssues": [],
+  "summary": "",
+  "recommendations": [],
+  "market": { "target": "", "competitors": [], "trends": [] },
+  "validation": { "status": "", "reason": "" }
+}
+`;
 
-      // 🔹 Merge both outputs
+      const analysis = await this.callAI(prompt);
+
       return {
-        score: analysisData.overallScore || 50,
-        feasibility: analysisData.feasibilityScore || 50,
-        market: analysisData.marketScore || 50,
-        innovation: analysisData.innovationScore || 50,
-
-        swot: analysisData.swot || { s: [], w: [], o: [], t: [] },
-        keyIssues: analysisData.keyIssues || [],
-
-        suggestions: finalData.recommendations || [],
-        aiSummary: finalData.summary || "",
-
+        score: analysis.overallScore || 50,
+        feasibility: analysis.feasibilityScore || 50,
+        market: analysis.marketScore || 50,
+        innovation: analysis.innovationScore || 50,
+        swot: analysis.swot || { s: [], w: [], o: [], t: [] },
+        keyIssues: analysis.keyIssues || [],
+        suggestions: analysis.recommendations || [],
+        aiSummary: analysis.summary || "",
         marketResearchReport: {
-          targetDemographic: finalData.market?.target || "",
-          competitors: finalData.market?.competitors || [],
-          trends: finalData.market?.trends || []
+          targetDemographic: analysis.market?.target || "",
+          competitors: analysis.market?.competitors || [],
+          trends: analysis.market?.trends || []
         },
-
-        validation: analysisData.validation || { status: "WEAK" }
+        validation: analysis.validation || { status: "WEAK" }
       };
 
     } catch (error) {

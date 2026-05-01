@@ -464,10 +464,8 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (page === "chat") {
-      scrollToBottom();
-    }
-  }, [chatMessages, page]);
+    scrollToBottom();
+  }, [chatMessages, chatLoading, page]);
 
   const handleLogin = (userData) => {
     setUser(userData);
@@ -582,7 +580,7 @@ export default function App() {
           messages: updatedMessages,
           model: chatModel,
           temperature: 0.7,
-          max_tokens: 700,
+          max_tokens: 500,
         }),
       });
       const data = await response.json();
@@ -945,7 +943,7 @@ export default function App() {
                   </div>
                 </div>
 
-                <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 24, display: "flex", flexDirection: "column", height: "calc(100vh - 280px)" }}>
+                <div style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 24, display: "flex", flexDirection: "column", height: "calc(100vh - 200px)" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "#a78bfa", letterSpacing: 1.5, marginBottom: 6 }}>LIVE CHAT</div>
