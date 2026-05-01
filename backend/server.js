@@ -22,16 +22,15 @@ async function connectToDatabase() {
 
   console.log("📍 Connecting to MongoDB...");
   try {
-    const uri = process.env.MONGODB_URI;
-    if (!uri) {
-      console.warn("⚠️ MONGODB_URI missing, using Mock DB mode");
-      throw new Error("No URI");
-    }
+    const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/ideaforge";
+    
+    // Use existing connection if available
+    if (mongoose.connection.readyState === 1) return mongoose.connection;
     
     cachedDb = await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 5000,
     });
-    console.log("✅ MongoDB Connected!");
+    console.log("✅ MongoDB Connected to:", uri.includes("mongodb+srv") ? "Atlas Cloud" : "Localhost");
     return cachedDb;
   } catch (e) {
     console.error("❌ MongoDB Connection Error:", e.message);
