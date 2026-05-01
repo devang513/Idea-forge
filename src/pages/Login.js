@@ -34,7 +34,7 @@ function Login({ onLogin, onSwitchToSignup, onGoHome }) {
 
     const API_BASE_URL = window.location.hostname === 'localhost' 
       ? 'http://localhost:5001' 
-      : 'https://idea-forge-991a.vercel.app';
+      : 'https://idea-forge-chi.vercel.app';
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/auth/login`, {

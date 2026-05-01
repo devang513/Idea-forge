@@ -57,7 +57,7 @@ function IdeaDetail({ idea, onClose }) {
     setVoteCount(v => v + 1);
     const API_BASE_URL = window.location.hostname === 'localhost' 
       ? 'http://localhost:5001' 
-      : 'https://idea-forge-991a.vercel.app';
+      : 'https://idea-forge-chi.vercel.app';
       
     try {
       await fetch(`${API_BASE_URL}/ideas/${idea._id || idea.id}/vote`, {
